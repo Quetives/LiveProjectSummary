@@ -1,0 +1,87 @@
+At present, users can register for a new account and they can log into their accounts. However, there is no email confirmation implemented. It is best to confirm the email of a new user registration to verify that they are not impersonating someone else.  Please implement a method to email out a confirmation link to newly registered users that they are required to use before they can log on. You can also look at the resource provided below for an idea of how this can be carried out. 
+
+
+[HttpPost]
+        [AllowAnonymous]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Register(RegisterViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new ApplicationUser { FirstName = model.FirstName, LastName = model.LastName, Email = model.Email, UserName = model.UserName, StreetAddress = model.StreetAddress, City = model.City, State = model.State, ZipCode = model.ZipCode};
+                var result = await UserManager.CreateAsync(user, model.Password);
+                if (result.Succeeded)
+                {
+                    //  Comment the following line to prevent log in until the user is confirmed.
+                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+                    // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+                    // Send an email with this link
+                    // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                    // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                    // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+                    //Uncomment to utilize SendGrid Email Confirmation
+                    await EmailCodeSendGrid(user, model);
+                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed before you can log in";
+                    return View("Info");
+
+                    //return RedirectToAction("Index", "Home");
+                }
+                AddErrors(result);
+                return View(model);
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View(model);
+        }
+
+
+
+
+
+
+
+
+
+
+
+[HttpPost]
+        public async Task<ActionResult> EmailCodeSendGrid(ApplicationUser user, RegisterViewModel model)
+        {            
+                string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                string message = "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>";
+                string subject = "Confirm your account";
+                var apiKey = Environment.GetEnvironmentVariable("SendGrid_Key");
+                var client = new SendGridClient(apiKey);
+                var msg = new SendGridMessage()
+                
+                {
+                    From = new EmailAddress("r.quetives@gmail.com", "Richard Quetives"),
+                    Subject = subject,
+                    PlainTextContent = message,
+                    HtmlContent = message
+                };
+                msg.AddTo(new EmailAddress(model.Email, model.FirstName + " " + model.LastName));
+                var response = await client.SendEmailAsync(msg);
+
+                // Uncomment to debug locally
+                //TempData["ViewBagLink"] = callbackUrl;
+                bool confirm = (Convert.ToString(response.StatusCode) == "Accepted") ? true : false;
+                return Json(confirm);
+        }
+
+
+
+
+
+
+
+//Views/shared/info
+
+<h3>@ViewBag.Message</h3>
+
+
+
+

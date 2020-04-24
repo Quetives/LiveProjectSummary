@@ -1,0 +1,51 @@
+We have a method in our Photo class, "DisplayPhoto", that we use for displaying images in the views.  Currently that method will throw an error either if it is not provided an id, or if the id is not valid.  We would like to make the method more robust by accounting for these situations.
+
+The first step to fixing this is to add code that can account for null or invalid id's.  In those cases we still want to return a file to the views, but the byte array does not have to represent an actual image
+
+To accomplish this story, be sure to test both null and invalid id's, research byte arrays, and investigate how DisplayPhoto is being used to display images.
+
+
+
+
+  public ActionResult DisplayPhoto(int? id) //nullable int
+        {            
+            var byteData = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };           
+                if (id.HasValue)
+                {                
+                Photo photo = db.Photo.Find(id);
+                    if (photo == null)
+                    {
+                        return File(byteData, "image/png");
+                    }
+                    else
+                    {
+                        return File(photo.PhotoFile, "image/png");
+                    }                                                                  
+                }
+                else
+                { 
+                    return File(byteData, "image/png");
+                }
+            }
+
+
+-------------------------------------------------------------------------------------------------
+
+
+
+ public ActionResult DisplayPhoto(int? id) //nullable int
+        {            
+            var byteData = new byte[] { 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20 };           
+                if (id.HasValue)
+                {                
+                Photo photo = db.Photo.Find(id);
+		    if (photo != null)
+{
+return File(photo.PhotoFile, "image/png");
+}
+else
+{
+return File(byteData, "image/png");
+}
+
+

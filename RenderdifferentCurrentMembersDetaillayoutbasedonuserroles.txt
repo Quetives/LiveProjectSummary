@@ -1,0 +1,143 @@
+Currently, any user can access the Company > Current Members> Details page. We do want all users to acces this page. However, we do not want users who are not admins to be able to edit cast member details. Only the admin should have access to this. All other users should only be able to view the page without those links.  Modify the Current view based on user roles.  You will need to research how to verify the role of the current logged in user using built-in MVC methods, and accomplish this story using Razor syntax.
+
+
+
+eatreCMS.Controllers
+@model TheatreCMS.Models.CastMember
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>CastMember</h4>
+    <hr />
+
+    <div class="row">
+        <dl class="dl-horizontal justify-content-start col-md-9">
+            <dt>
+                User Name:
+            </dt>
+            <dd class="col-md-9">
+                @ViewBag.CurrentUser
+            </dd>
+            <dt>
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.YearJoined)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.YearJoined)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.MainRole)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.MainRole)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Bio)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.Bio)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.Photo)
+            </dt>
+
+            <dd class="col-md-9">
+
+                    @{
+                        string img = "";
+                        if (Model.Photo != null)
+                        {
+                            byte[] thumbBytes = ImageUploadController.ImageThumbnail(Model.Photo, 100, 100);
+                            var base64 = System.Convert.ToBase64String(thumbBytes);
+                            img = String.Format("data:image/png;base64,{0}", base64);
+                        }
+                    }
+                    <img src="@img" />
+
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.AssociateArtist)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.AssociateArtist)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.EnsembleMember)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.EnsembleMember)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CastYearLeft)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.CastYearLeft)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.DebutYear)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.DebutYear)
+            </dd>
+
+            <dt>
+                @Html.DisplayNameFor(model => model.CurrentMember)
+            </dt>
+
+            <dd class="col-md-9">
+                @Html.DisplayFor(model => model.CurrentMember)
+            </dd>
+
+        </dl>
+        <div class="justify-content-end col-md-3">
+            <dl>
+                @if (Model.Parts.Count() != 0)
+                {
+                    <dt>
+                        @Html.DisplayNameFor(model => model.Parts)
+                    </dt>
+                    foreach (var role in Model.Parts)
+                    {
+                        <dd>
+                            <a href="/Part/Details/@role.PartID">@Html.DisplayFor(model => role.Character)</a>
+                        </dd>
+                    }
+                }
+            </dl>
+        </div>
+    </div>
+</div>
+<p>
+    @if (User.IsInRole("Admin"))
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.CastMemberID })
+        @(" |")
+    }
+    @Html.ActionLink("Back to List", "Index")
+</p>
