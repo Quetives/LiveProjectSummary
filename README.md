@@ -5,9 +5,9 @@ For the last two weeks of my time at the tech academy, I worked with my peers in
 
 Below are descriptions of the stories I worked on, along with code snippets and navigation links. I also have some full code files in this repo for the larger functionalities I implemented.
 
-Back End Stories
+# Back End Stories
 
-Display Photo Null or Invalid ID handling
+# Display Photo Null or Invalid ID handling
 
 There was a method in the photo class called DisplayPhoto that would currently throw an error if it was provided a null or invalid id. Accounting for these situations I researched how the project was using byteArrays to display photos and came up with this solution.
 
@@ -52,7 +52,7 @@ However soon after I realized how I could refactor my code:
 
 
 
-Implementing Email Confirmation For New Accounts
+# Implementing Email Confirmation For New Accounts
 
 This was the most difficult part of the project for me. The instructions for this wanted me to implement the SendGrid package and utilize their service to generate and send out confirmation tokens. I gained alot of knowledge working with 3rd party services on this story. I had to create my own SendGrid account and generate an API key to be able to test and use this service. Once I generated the key I put it into an Environmental Variable to be called upon by the project.
 
@@ -95,7 +95,7 @@ This would call my function:
 
 
 
-Render different CurrentMember Detail layout based on user roles
+# Render different CurrentMember Detail layout based on user roles
 
 For this task the project manager did not want the edit buttons on the Members Details page to appear unless you had were in the Admin user role. So for this I implemented a simple check of the user role before displaying the edit button.
 
@@ -114,7 +114,7 @@ This had the desired effect of hiding the edit button for all but the Admins and
 
 
 
-Front End Stories
+# Front End Stories
 
 Subscriber Details page
 
